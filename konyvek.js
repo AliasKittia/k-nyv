@@ -16,7 +16,8 @@ fetch("https://localhost:5001/Konyv")
                     </div>
                     <img class="card-img-top" src="${Konyv.kepneve}" alt="Card image cap">
                     <button type="button" onclick="Torles(${Konyv.id})" class="btn btn-danger">Törlés</button>
-                    <button type="button" onclick="Modositas(${Konyv.id}, '${Konyv.nev}', ${Konyv.kiadasEve}, ${Konyv.ertekeles}, '${Konyv.kepneve}')" class="btn btn-warning">Szerkesztés</button>
+<button type="button" onclick="Modositas(${Konyv.id}, '${Konyv.nev}', ${Konyv.kiadasEve}, ${Konyv.ertekeles}, '${Konyv.kepneve}')" class="btn btn-warning">Szerkesztés</button>
+
                   </div>
             `;
         });
@@ -52,5 +53,55 @@ fetch("https://localhost:5001/Konyv")
             console.error('Hiba történt:', error);
             alert('Hiba történt a könyv hozzáadása során.');
         });
+
+
     });
     
+function Torles(id) {
+    fetch(`https://localhost:5001/Konyv/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Könyv sikeresen törölve!');
+            location.reload(); // Frissíti az oldalt, hogy azonnal látszódjon a változás
+        } else {
+            alert('Hiba történt a könyv törlése során.');
+        }
+    })
+    .catch(error => console.error('Hiba történt:', error));
+}
+
+function Modositas(id, nev, kiadasEve, ertekeles, kepURL) {
+    const ujID = Number(id)
+    const ujNev = prompt('Kérem adja meg a könyv új nevét:', nev);
+    const ujKiadasEve = Number(prompt('Kérem adja meg a könyv új kiadás évét:', kiadasEve));
+    const ujErtekeles = Number(prompt('Kérem adja meg a könyv új értékelését:', ertekeles));
+    const ujKepURL = prompt('Kérem adja meg a könyv új kép URL-jét:', kepURL);
+
+    const modositottKonyv = {
+        id:ujID,
+        nev: ujNev,
+        kiadasEve: ujKiadasEve,
+        ertekeles: ujErtekeles,
+        kepneve: ujKepURL
+    };
+console.log(modositottKonyv);
+    fetch(`https://localhost:5001/Konyv/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(modositottKonyv)
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Könyv sikeresen módosítva!');
+            location.reload(); // Frissíti az oldalt, hogy azonnal látszódjon a változás
+        } else {
+            alert('Hiba történt a könyv módosítása során.');
+        }
+    })
+    .catch(error => console.error('Hiba történt:', error));
+}
+
